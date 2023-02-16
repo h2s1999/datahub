@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vpplab.io.datahub.domain.external.mlone.MlOneDao">
+    <!-- Ml1 data insert -->
+    <insert id="setMlone" parameterType="java.util.List">
+        INSERT INTO forecast_ml1 (id, plant_id, base_datetime, forecast_datetime, forecast_10, forecast_50, forecast_90)
+        VALUES
+        <foreach collection="list" item="item" separator="," index="index">
+            ( null, #{item.plant_id}, #{item.base_datetime}, #{item.forecast_datetime}, #{item.forecast_10}, #{item.forecast_50}, #{item.forecast_90} )
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,102 @@
+spring:
+  profiles:
+    group:
+      "local": "common, local-conf"
+      "dev": "common, dev-conf"
+      "prod": "common, prod-conf"
+    # VM options : -Dspring.profiles.active=[ local || dev || prod || local-rds]
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "common"
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://${FLOW_DB_URL}/datahub?characterEncoding=utf8&allowMultiQueries=true
+    username: ${FLOW_DB_USERNAME}
+    password: ${FLOW_DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      auto-commit: false
+      connection-init-test-query: SELECT 1 FROM DUAL
+
+  main:
+    allow-circular-references: true
+
+mail:
+  host: ${SMTP_HOST}
+  port: ${SMTP_PORT}
+  username: ${SMTP_USERNAME}
+  password: ${SMTP_PASSWORD}
+  smtp:
+    auth: true
+    start-tls-enabled: true
+
+### kpx API
+kpx-api-url: https://deras.kmos.kr
+
+### ML1 API
+ml1 :
+  ml1-url  : https://webservice.meteologica.com/api/MeteologicaDataExchangeService.php
+  ml1-id   : ${ML1_ID}
+  ml1-pw   : ${ML1_PASSWORD}
+
+server:
+  port: 8888
+  servlet:
+    session:
+      timeout: -1
+---
+### local
+spring:
+  config:
+    activate:
+      on-profile: "local-conf"
+
+### some constant or setting properties write here
+---
+### dev
+spring:
+  config:
+    activate:
+      on-profile: "dev-conf"
+### some constant or setting properties write here
+---
+### prod
+spring:
+  config:
+    activate:
+      on-profile: "prod-conf"
+### some constant or setting properties write here
+
+# health check
+management:
+  health:
+    mail:
+      enabled: false
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - conditions
+        exclude:
+          - env
+          - beans
+          - threaddump
+          - heapdump
+---
+### Exception config
+server:
+  error:
+    include-exception: false      # Response 에 Exception 을 표시할지
+    include-message: always       # Response 에 Exception Message 를 표시할지 (never | always | on_param)
+    include-stacktrace: never  # Response 에 Stack Trace 를 표시할지 (never | always | on_param) on_trace_params 은 deprecated
+    whitelabel.enabled: true      # 에러 발생 시 Spring 기본 에러 페이지 노출 여부
+---

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vpplab.io.datahub.domain.test.TestDao">
+    <select id="getIssueList" parameterType="hashMap" resultType="hashMap">
+        SELECT
+            A.requested_at AS 요청일시
+             ,B.name AS 구분
+             ,D.name AS 발전자원
+             ,A.requested_memo AS  메모
+        FROM event A
+                 LEFT OUTER JOIN admin_common_code B ON A.type = B.code  AND B.category = '요청구분'
+                 LEFT OUTER JOIN admin_common_code C ON A.status = C.code  AND C.category = '제어처리상태'
+                 LEFT OUTER JOIN resource D ON A.resource_id = D.id
+                 INNER JOIN resource_set_list AA ON A.resource_id = AA.resource_id
+                 INNER JOIN resource_set BB ON AA.resource_set_id = BB.id AND BB.agency_id = #{중개사업자ID}
+        WHERE DATE_FORMAT(NOW(), '%m') BETWEEN DATE_FORMAT(A.start_at,'%m') AND DATE_FORMAT(A.end_at,'%m')
+        ORDER BY A.requested_at DESC
+            LIMIT 4
+    </select>
+
+</mapper>
